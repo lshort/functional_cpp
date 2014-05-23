@@ -14,25 +14,29 @@ using std::vector;
 using compositional::operator*;
 using compositional::_L;
 
+// some static fcns to test with
 int add1(int x)  { return x+1; }
 int sub1(int x)  { return x-1; }
+
+// some lambdas to test with
 auto incr = [](auto a) { return a+1; };
 auto dbl = [](auto a) { return a*2; };
 auto triple = [](auto a) { return a*3; };
+auto output_decorate = [] (auto a) { cout << a << " "; return a; };
 
 
 int main()
 {
     vector<int> data {1,2,3,4};
-    auto double_and_incr = incr * dbl;
-    auto double_incr_triple = triple * incr * dbl;
 
-    vector<int> map_results = functional::map(double_and_incr,data);
-    cout << map_results[0] << " " << map_results[3] << endl;
-    cout << double_incr_triple(5) << endl;
+    auto double_incr_decor = output_decorate * incr * dbl;
+    vector<int> map_results = functional::map(double_incr_decor,data);
+
+    auto double_incr_triple = triple * incr * dbl;
+    cout << endl << double_incr_triple(5) << endl;
 
     std::deque<int> deq {1,2,3,4};
-    mutates::tmap(double_and_incr,deq);
+    mutates::tmap(double_incr_triple,deq);
     cout << deq[0] << " " << deq[3] << endl;
     cout << 3*5 << endl;   // make sure we haven't hidden plain old *
 
