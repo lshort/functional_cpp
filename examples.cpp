@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <math.h>
 #include <ctgmath>
 #include <deque>
 #include "compositional.hpp"
@@ -38,7 +39,7 @@ int main()
     auto ident = _L(add1) * _L(sub1);
     cout << ident(1) << endl;
 
-    auto div = [](auto x) { return x/5.0; };
-    auto find_angle = _L(cos) * div;
-    cout << find_angle(1.5) << endl;
+    auto to_radians = [](auto x) { return x*M_PI/180.0; };
+    auto cos_in_degrees = _L(cos) * to_radians;
+    cout << cos_in_degrees(45.0) << endl;
 }
