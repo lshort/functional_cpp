@@ -34,6 +34,16 @@ namespace mutates {
 }
 
 
+class ComposableUnaryFcn {
+    struct FcnConcept {
+        virtual ~FcnConcept() {}
+    };
+    template< typename return_type, typename argument_type > struct FcnModel : FcnConcept {
+        FcnModel( const T& t )
+    }
+
+}
+
 
 //namespace compose {
 
@@ -52,6 +62,19 @@ auto operator* (return_type (*f1)(intermediate),
     return [f1, f2] (auto x) { return f1(f2(x)); };
 };
 //}
+
+template<typename return_type, typename argument_type>
+class closure {
+public:
+    // closure(return_type(*fcn_ptr)(argument_type)) : fp(fcn_ptr) {};
+    closure(return_type(*fcn_ptr)(argument_type))  
+        { lambda = [fcn_ptr] (auto x) { return fcn_ptr(x); }; };
+    operator auto () { return lambda; };
+private:
+    auto lambda;
+    //    return_type (*fp) (argument_type);
+};
+
 
 //using compose::operator*;
 
@@ -83,6 +106,6 @@ int main()
     //      
     int (*fp1)(int) = &add1;
     int (*fp2)(int) = &sub1;
-    int (*ident)(int) = fp1 * fp2;     // GGG
+    auto ident = closure<int,int>(fp1) * closure<int,int>(fp2);     // GGG
     cout << ident(1) << endl;
 }
