@@ -1,6 +1,6 @@
 /**  This module provides support for composing functions in C++.  
      Composing lambdas, really, but it provides a lightweight way
-     to convert any unary function to a lambda.  
+     to convert any function to a lambda.  
 */
 
 #include <functional>
@@ -20,6 +20,10 @@ namespace functional {
         for (const auto &elem : container)
             retval.push_back(function(elem));
         return retval;
+    };
+
+    auto flip = [] (const auto &function) {
+        return [function] (auto x, auto y) { return function(y,x); };
     };
 }
 
@@ -45,8 +49,7 @@ namespace compositional {
          @return A lambda function, the composition of l1 and l2 */
     template<typename Lambda1, typename Lambda2>
     auto operator* (Lambda1 l1, Lambda2 l2)
-    {  return [l1, l2](auto x) { return l1(l2(x)); };  };
-
+    {  return [l1, l2](auto ... x) { return l1(l2(x...)); };  };
 
     /**  Casts any function to a lambda
          @param[in] fp The input function pointer
@@ -55,5 +58,13 @@ namespace compositional {
     auto _L( return_type (*fp) (params... args))
       { return [fp] (params... args) { return fp(args...); }; };
 
+    /**  Casts any function to a lambda, binding the first argument to x
+         @param[in] fp The input function pointer
+         @param[in] x The value of the first argument to the function
+         @return A lambda function which applies fp, taking x as the first
+         @return argument of the function invocation, others supplied at call site 
+    */
+    template<typename return_type, typename arg1_type, typename ...params>
+    auto _L1( return_type (*fp) (arg1_type x, params...args), arg1_type x)
+    { return [fp, x] (params...args) { return fp(x,args...); };  };
 }
-

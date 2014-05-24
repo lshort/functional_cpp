@@ -12,7 +12,7 @@ using std::endl;
 using std::vector;
 
 using compositional::operator*;
-using compositional::_LL;
+using compositional::_L1;
 using compositional::_L;
 
 // some static fcns to test with
@@ -20,6 +20,7 @@ namespace tst {
     int add1(int x)  { return x+1; }
     int sub1(int x)  { return x-1; }
     double div(double x, double y) { return x/y; }
+    double mult(double x, double y) { return x*y; }
 };
 
 
@@ -45,11 +46,10 @@ int main()
     cout << deq[0] << " " << deq[3] << endl;
     cout << 3*5 << endl;   // make sure we haven't hidden plain old *
 
-    auto ident = _LL(tst::add1) * _LL(tst::sub1);
+    auto ident = _L(tst::add1) * _L(tst::sub1);
     cout << ident(1) << endl;
-
-    //    auto to_radians = [](auto x) { return x*M_PI/180.0; };
-    auto foo = _L(div);
-    auto cos_in_degrees = _L(cos) * _L(tst::div);
-    cout << cos_in_degrees(45.0,180.0) << endl;
+    
+    auto to_radians = _L1(tst::mult,M_PI/180.0);
+    auto cos_in_degrees = _L(cos) * to_radians;
+    cout << "cps " << cos_in_degrees(45.0) << endl;
 }
