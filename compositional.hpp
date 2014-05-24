@@ -47,11 +47,13 @@ namespace compositional {
     auto operator* (Lambda1 l1, Lambda2 l2)
     {  return [l1, l2](auto x) { return l1(l2(x)); };  };
 
+
     /**  Casts any function to a lambda
          @param[in] fp The input function pointer
          @return A lambda function which applies fp to its arguments */
     template<typename return_type, typename ...params>
     auto _L( return_type (*fp) (params... args))
       { return [fp] (params... args) { return fp(args...); }; };
+
 }
 
