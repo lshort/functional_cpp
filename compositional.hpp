@@ -51,12 +51,16 @@ namespace compositional {
     auto operator* (Lambda1 l1, Lambda2 l2)
     {  return [l1, l2](auto ... x) { return l1(l2(x...)); };  };
 
+
+
     /**  Casts any function to a lambda
          @param[in] fp The input function pointer
          @return A lambda function which applies fp to its arguments */
     template<typename return_type, typename ...params>
     auto _L( return_type (*fp) (params... args))
       { return [fp] (params... args) { return fp(args...); }; };
+
+
 
     /**  Casts any function to a lambda, binding the first argument to x
          @param[in] fp The input function pointer
@@ -67,4 +71,32 @@ namespace compositional {
     template<typename return_type, typename arg1_type, typename ...params>
     auto _L1( return_type (*fp) (arg1_type x, params...args), arg1_type x)
     { return [fp, x] (params...args) { return fp(x,args...); };  };
+
+    /**  Casts any function to a lambda, binding the first two arguments to x, y
+         @param[in] fp The input function pointer
+         @param[in] x The value of the first argument to the function
+         @param[in] y The value of the second argument to the function
+         @return A lambda function which applies fp, taking x as the first two
+         @return arguments of the function invocation, others supplied at call site 
+    */
+    template<typename return_type, typename arg1_type, typename arg2_type, 
+             typename ...params>
+    auto _L2( return_type (*fp) (arg1_type x, arg2_type y, params...args), 
+              arg1_type x, arg2_type y)
+    { return [fp, x, y] (params...args) { return fp(x,y,args...); };  };
+
+    /**  Casts any function to a lambda, binding the first 3 arguments to x,y,z
+         @param[in] fp The input function pointer
+         @param[in] x The value of the first argument to the function
+         @param[in] y The value of the second argument to the function
+         @param[in] z The value of the third argument to the function
+         @return A lambda function which applies fp, taking x,y,z as the first 3
+         @return arguments of the function invocation, others supplied at call site 
+    */
+    template<typename return_type, typename arg1_type, typename arg2_type, 
+             typename arg3_type, typename ...params>
+    auto _L3( return_type (*fp) (arg1_type x, arg2_type y, arg3_type z, params...args), 
+              arg1_type x, arg2_type y, arg3_type z)
+    { return [fp, x, y, z] (params...args) { return fp(x,y,z,args...); };  };
+
 }
