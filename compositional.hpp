@@ -4,7 +4,8 @@
 */
 
 #include <functional>
-
+#include <type_traits>
+#include <boost/proto/core.hpp>
 
 namespace functional {
     /**  Maps the function across all the elements of the retainer, 
@@ -47,9 +48,10 @@ namespace compositional {
          @param[in] l1 The outer function
          @param[in] l2 The inner function
          @return A lambda function, the composition of l1 and l2 */
-    template<typename Lambda1, typename Lambda2>
+    template<typename Lambda1, typename Lambda2 >
+    //             class = typename std::enable_if<std::is_function<Lambda1>::value>::type>
     auto operator* (Lambda1 l1, Lambda2 l2)
-    {  return [l1, l2](auto ... x) { return l1(l2(x...)); };  };
+    {  return [l1, l2](auto&& ... x) { return l1(l2(std::forward<decltype(x)>(x)...)); };  };
 
 
 
